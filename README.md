@@ -8,7 +8,7 @@
 
 ```
 energy-board /api/meetings  →  build_feed.py  →  docs/*.xml  →  GitHub Pages  →  Inoreader購読
-                                                  （6時間ごとに自動更新）
+                                                  （48時間ごとに自動更新）
 ```
 
 依存ライブラリなし（Python標準ライブラリのみ）。
@@ -49,7 +49,12 @@ python3 build_feed.py --config feeds.json
 5. **Actions** タブで `Build Energy Board RSS` を一度手動実行（Run workflow）。
 6. 数分後、`https://<ユーザー名>.github.io/energy-board-rss/` にフィード一覧ページができる。
 
-以降は6時間ごとに自動更新される。
+以降は48時間ごとに自動更新される。
+
+## 運用上の自動化（自動停止対策・失敗通知）
+
+- **自動更新の継続**: ワークフローは毎回 `docs/*.xml` をリポジトリへコミットで戻す。これによりコミット活動が継続し、GitHub の「60日間リポジトリ無活動でスケジュール実行が自動停止」ルールに引っかからない（＝放置しても止まらない）。
+- **失敗通知**: ビルドが失敗すると、リポジトリに通知用の Issue が自動で立つ（既存があればコメント追記）。また全フィード合計が 0 件になった場合は上流 API 障害の疑いとしてビルドを意図的に失敗させ、同じく通知に乗せる。Issue 通知に加え、GitHub からは設定に応じてメール通知も届く。
 
 ## Inoreaderで購読
 

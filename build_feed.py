@@ -181,6 +181,15 @@ def main():
                 base_url=base,
             )
         print(f"[done] {len(cfg['feeds'])} feeds, {total} items total")
+        # 全フィード合計が 0 件＝上流 API の障害/仕様変更の可能性が高い。
+        # 200 OK でも中身が空のケースをここで「失敗」に変換し、通知に乗せる。
+        if total == 0:
+            print(
+                "[error] 全フィードが 0 件でした。上流 API(energy-board.xvps.jp) の "
+                "障害かフィールド名変更の疑いがあります。",
+                file=sys.stderr,
+            )
+            return 1
     else:
         generate_one(
             out_path=args.out,

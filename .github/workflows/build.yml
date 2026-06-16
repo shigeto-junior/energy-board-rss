@@ -2,7 +2,7 @@ name: Build Energy Board RSS
 
 on:
   schedule:
-    - cron: "0 */6 * * *"   # 6時間ごと（UTC）。JSTで 00/06/12/18 時頃
+    - cron: "0 21 */2 * *"   # 48時間ごと（UTC 21:00 = JST 翌06:00 頃）
   workflow_dispatch:        # 手動実行ボタン
   push:
     branches: [ main ]
@@ -12,9 +12,10 @@ on:
       - ".github/workflows/build.yml"
 
 permissions:
-  contents: read
+  contents: write   # 生成した XML をリポジトリへコミットで戻すため
   pages: write
   id-token: write
+  issues: write     # 失敗時に通知用 Issue を立てる/コメントするため
 
 # 同時実行を1つに制限
 concurrency:
@@ -42,9 +43,45 @@ jobs:
             done
             echo '</ul>'
           } > docs/index.html
+      # 生成物をリポジトリへコミットで戻す。
+      #  (1) リポジトリの commit 活動が継続するので、GitHub の「60日無活動で
+      #      スケジュール実行が自動停止」ルールに引っかからない（自動停止対策）。
+      #  (2) リポジトリ内の docs/*.xml も常に最新に保たれる。
+      # lastBuildDate が毎回変わるため、毎回必ず差分が出てコミットされる。
+      # GITHUB_TOKEN による push はワークフローを再起動しない（無限ループしない）。
+      - name: Commit refreshed feeds
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add docs
+          if git diff --staged --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "chore: refresh feeds [skip ci]"
+            git push
+          fi
       - uses: actions/upload-pages-artifact@v3
         with:
           path: docs
+      # ビルド失敗時（API 障害・仕様変更・全フィード0件ガード発火など）に通知。
+      # 既存の未解決 Issue があればコメントを足し、なければ新規作成する（乱立防止）。
+      - name: Notify on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          title="⚠️ RSSフィードの更新に失敗しました"
+          run_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+          body=$(printf '%s\n\n%s\n\n%s' \
+            "ビルドが失敗しました。実行ログ: ${run_url}" \
+            "上流 API (energy-board.xvps.jp) の障害・仕様変更、または全フィード0件ガードの発火が考えられます。" \
+            "復旧したら次回の自動実行（または手動 Run workflow）で本 Issue は手動クローズしてください。")
+          existing=$(gh issue list --state open --search "$title in:title" --json number --jq '.[0].number')
+          if [ -n "$existing" ]; then
+            gh issue comment "$existing" --body "$body"
+          else
+            gh issue create --title "$title" --body "$body"
+          fi
 
   deploy:
     needs: build
