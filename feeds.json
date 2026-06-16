@@ -1,0 +1,90 @@
+{
+  "base_url": "https://shigeto-junior.github.io/energy-board-rss",
+  "out_dir": "docs",
+  "feeds": [
+    {
+      "file": "decarbonization.xml",
+      "title": "METI審議会 新着：脱炭素",
+      "search": "脱炭素",
+      "limit": 80
+    },
+    {
+      "file": "solar.xml",
+      "title": "METI審議会 新着：再エネ／太陽光",
+      "search": "太陽光",
+      "limit": 80
+    },
+    {
+      "file": "offshore-wind.xml",
+      "title": "METI審議会 新着：再エネ／洋上風力",
+      "search": "洋上風力",
+      "limit": 80
+    },
+    {
+      "file": "geothermal.xml",
+      "title": "METI審議会 新着：再エネ／地熱",
+      "search": "地熱",
+      "limit": 60
+    },
+    {
+      "file": "hydro.xml",
+      "title": "METI審議会 新着：再エネ／水力",
+      "search": "水力",
+      "limit": 60
+    },
+    {
+      "file": "renewables.xml",
+      "title": "METI審議会 新着：再エネ全般（その他含む）",
+      "search": "再生可能エネルギー",
+      "limit": 80
+    },
+    {
+      "file": "renewable-mainstream.xml",
+      "title": "METI審議会 新着：再生可能エネルギー主力電源化小委員会",
+      "council": ["再生可能エネルギー主力電源化小委員会"],
+      "limit": 80
+    },
+    {
+      "file": "gx.xml",
+      "title": "METI審議会 新着：GX",
+      "search": "GX",
+      "limit": 60
+    },
+    {
+      "file": "supply-capacity.xml",
+      "title": "METI審議会 新着：供給力確保",
+      "search": "供給力確保",
+      "limit": 60
+    },
+    {
+      "file": "grid-storage.xml",
+      "title": "METI審議会 新着：系統用蓄電池",
+      "search": "系統用蓄電池",
+      "limit": 60
+    },
+    {
+      "file": "balancing-market.xml",
+      "title": "METI審議会 新着：需給調整市場",
+      "search": "需給調整市場",
+      "limit": 60
+    },
+    {
+      "file": "curtailment.xml",
+      "title": "METI審議会 新着：出力制御",
+      "search": "出力制御",
+      "limit": 80
+    },
+    {
+      "file": "emissions-trading.xml",
+      "title": "METI審議会 新着：排出量取引",
+      "search": "排出量取引",
+      "limit": 60
+    },
+    {
+      "file": "nuclear.xml",
+      "title": "METI審議会 新着：原子力",
+      "search": "原子力",
+      "limit": 80
+    }
+  ]
+}
